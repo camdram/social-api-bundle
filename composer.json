@@ -1,0 +1,24 @@
+{
+    "name": "acts/social-api-bundle",
+    "description": "A bundle for accessing data from OAuth 1/2 REST APIs. Provides an extendable list of methods for calling Facebook and Twitter APIs.",
+    "keywords": ["facebook", "twitter", "oauth", "api", "social"],
+    "type": "symfony-bundle",
+    "license": "MIT",
+    "authors": [
+        {
+            "name":     "Peter Hoyes",
+            "email":    "pahoyes@gmail.com"
+        }
+    ],
+    "require": {
+        "php":             ">=5.3.0",
+        "symfony/symfony": ">=2.1"
+    },
+    "autoload": {
+        "psr-0": {
+            "Acts\\SocialApiBundle": ""
+        }
+    },
+    "target-dir" : "/Acts/SocialApiBundle"
+}
+
