@@ -137,6 +137,26 @@ class RestApi
         }
     }
 
+    private function checkForError($response)
+    {
+        if ($response === false) {
+            $error = array('message' => 'An error occurred');
+        }
+        elseif (isset($response['errors'])) {
+            $error = current($response['errors']);
+        }
+        elseif (isset($response['error'])) {
+            $error = $response['error'];
+        }
+
+        if (isset($error)) {
+            $message = isset($error['message']) ? $error['message'] : null;
+            $code = isset($error['code']) ? $error['code'] : null;
+
+            throw new ApiException($message, $code, ucfirst($this->getName()));
+        }
+    }
+
     public function callMethod($name, $arguments)
     {
         if (!isset($this->config['paths'][$name])) {
@@ -165,14 +185,7 @@ class RestApi
             $this->authenticateRequest($url, $config['method'], $params);
         }
         $response = $this->httpRequest($url, $config['method'], $params);
-
-        if ($response === false) {
-            throw new ApiException('An error occurred', 0, ucfirst($this->getName()));
-        }
-        elseif (isset($response['errors'])) {
-            $error = current($response['errors']);
-            throw new ApiException($error['message'], $error['code'], ucfirst($this->getName()));
-        }
+        $this->checkForError($response);
 
         if (is_array($response)) {
             return ApiResponse::factory($response, $this->config['paths'][$name]['response']);

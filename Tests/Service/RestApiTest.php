@@ -228,6 +228,34 @@ class RestApiTest extends \PHPUnit_Framework_TestCase
         $api->callMethod('search', array('blah', 'page'));
     }
 
+    public function testErrorResponse()
+    {
+        $api = $this->getMockBuilder('Acts\SocialApiBundle\Service\RestApi')
+            ->setMethods(array('httpRequest'))
+            ->setConstructorArgs(array($this->httpClient, new Inflector, 'facebook', 'test_agent', $this->config))
+            ->getMock();
+        $api->expects($this->once())->method('httpRequest')
+            ->with('https://graph.facebook.com/search', 'GET', array('q' => 'blah', 'type' => 'page'))
+            ->will($this->returnValue(array('error' => array('message' => 'An error has occurred', 'code' => 3))));
+
+        $this->setExpectedException('Acts\\SocialApiBundle\\Exception\\ApiException');
+        $api->callMethod('search', array('blah', 'page'));
+    }
+
+    public function testMultipleErrorResponse()
+    {
+        $api = $this->getMockBuilder('Acts\SocialApiBundle\Service\RestApi')
+            ->setMethods(array('httpRequest'))
+            ->setConstructorArgs(array($this->httpClient, new Inflector, 'facebook', 'test_agent', $this->config))
+            ->getMock();
+        $api->expects($this->once())->method('httpRequest')
+            ->with('https://graph.facebook.com/search', 'GET', array('q' => 'blah', 'type' => 'page'))
+            ->will($this->returnValue(array('errors' => array(array('message' => 'An error has occurred', 'code' => 3)))));
+
+        $this->setExpectedException('Acts\\SocialApiBundle\\Exception\\ApiException');
+        $api->callMethod('search', array('blah', 'page'));
+    }
+
     public function testGetQueryStrResponse()
     {
         $request  = new HttpRequest('GET', 'https://graph.facebook.com/search?foo=bar');
