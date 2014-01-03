@@ -201,7 +201,34 @@ class RestApiTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(array('test' => 'data'), $ret);
     }
 
-   /* public function testGetQueryStrResponse()
+    public function testBooleanTrueResponse()
+    {
+        $api = $this->getMockBuilder('Acts\SocialApiBundle\Service\RestApi')
+            ->setMethods(array('httpRequest'))
+            ->setConstructorArgs(array($this->httpClient, new Inflector, 'facebook', 'test_agent', $this->config))
+            ->getMock();
+        $api->expects($this->once())->method('httpRequest')
+            ->with('https://graph.facebook.com/search', 'GET', array('q' => 'blah', 'type' => 'page'))
+            ->will($this->returnValue(true));
+
+        $this->assertEquals(true, $api->callMethod('search', array('blah', 'page')));
+    }
+
+    public function testBooleanFalseResponse()
+    {
+        $api = $this->getMockBuilder('Acts\SocialApiBundle\Service\RestApi')
+            ->setMethods(array('httpRequest'))
+            ->setConstructorArgs(array($this->httpClient, new Inflector, 'facebook', 'test_agent', $this->config))
+            ->getMock();
+        $api->expects($this->once())->method('httpRequest')
+            ->with('https://graph.facebook.com/search', 'GET', array('q' => 'blah', 'type' => 'page'))
+            ->will($this->returnValue(false));
+
+        $this->setExpectedException('Acts\\SocialApiBundle\\Exception\\ApiException');
+        $api->callMethod('search', array('blah', 'page'));
+    }
+
+    public function testGetQueryStrResponse()
     {
         $request  = new HttpRequest('GET', 'https://graph.facebook.com/search?foo=bar');
         $request->setContent(array('foo' => 'bar'));
@@ -245,5 +272,5 @@ class RestApiTest extends \PHPUnit_Framework_TestCase
 
         $this->setExpectedException('\Acts\SocialApiBundle\Exception\TransportException');
         $this->api->get('/search', array('foo' => 'bar'));
-    }*/
+    }
 }

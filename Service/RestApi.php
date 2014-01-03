@@ -166,12 +166,21 @@ class RestApi
         }
         $response = $this->httpRequest($url, $config['method'], $params);
 
-        if (isset($response['errors'])) {
+        if ($response === false) {
+            throw new ApiException('An error occurred', 0, ucfirst($this->getName()));
+        }
+        elseif (isset($response['errors'])) {
             $error = current($response['errors']);
             throw new ApiException($error['message'], $error['code'], ucfirst($this->getName()));
         }
 
-        return ApiResponse::factory($response, $this->config['paths'][$name]['response']);
+        if (is_array($response)) {
+            return ApiResponse::factory($response, $this->config['paths'][$name]['response']);
+        }
+        else {
+            return $response;
+        }
+
     }
 
     public function __call($name, $arguments) {
