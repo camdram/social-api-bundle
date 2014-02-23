@@ -20,7 +20,7 @@ facebook:
         posts:
             path: /{id}/posts
             arguments: [id, limit]
-            defaults: {count: 50}
+            defaults: {count: 50, return_ssl_resources: 1}
             response: {root: 'data', map: {text: message, created_at: created_time, mentions: message_tags}}
             url_has_params: true
         get_by_id:
