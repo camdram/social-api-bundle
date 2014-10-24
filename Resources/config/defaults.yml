@@ -20,7 +20,7 @@ facebook:
         posts:
             path: /{id}/posts
             arguments: [id, limit]
-            defaults: {count: 50}
+            defaults: {count: 50, return_ssl_resources: 1}
             response: {root: 'data', map: {text: message, created_at: created_time, mentions: message_tags}}
             url_has_params: true
         get_by_id:
@@ -57,7 +57,7 @@ twitter:
             path: /1.1/statuses/user_timeline.json
             arguments: [user_id, count]
             defaults: {count: 50, trim_user: true, include_rts: false}
-            response: {map: {urls: entities.urls, mentions: entities.user_mentions }}
+            response: {map: {id: id_str, urls: entities.urls, mentions: entities.user_mentions }}
             url_has_params: true
         get_by_id:
             path: /1.1/users/show.json
